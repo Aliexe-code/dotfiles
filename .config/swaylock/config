@@ -1,0 +1,32 @@
+screenshots
+grace=2
+fade-in=0.2
+effect-blur=7x5
+effect-vignette=0.5:0.5
+effect-scale=1.1
+clock
+timestr=%H:%M:%S
+datestr=%A, %d %b %Y
+
+font-family=JetBrains Mono
+font-size=20
+
+indicator-radius=80
+indicator-thickness=8
+
+key-hl-color=89b4fa
+bs-hl-color=f38ba8
+caps-lock-bypass=true
+caps-lock-key-hl-color=cdd6f4
+
+separator-color=00000000
+
+inside-color=1e1e2ec8
+ring-color=89b4fa
+text-color=cdd6f4
+layout-color=cdd6f4
+
+binding-power=Mod+Shift+E
+binding-spower=Mod+Shift+E
+binding-reload=Mod+Shift+Escape
+binding-fingerprint=Mod+Shift+F

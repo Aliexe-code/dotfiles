@@ -1,0 +1,59 @@
+{
+  "layer": "top",
+  "position": "top",
+  "spacing": 0,
+  "height": 32,
+  "reload_style_on_change": true,
+  "reload_icon_pool_on_change": true,
+  "start_hidden": false,
+  "modules-left": ["niri/workspaces"],
+  "modules-center": ["clock"],
+  "modules-right": ["pulseaudio", "network", "niri/language", "custom/power", "tray"],
+
+  "niri/language": {
+    "format": "{}",
+    "format-en": "EN",
+    "format-ara": "AR"
+  },
+
+  "niri/workspaces": {
+    "format": "{name}",
+    "format-active": "<b>{name}</b>",
+    "format-dimmed": "<span alpha='0.4'>{name}</span>",
+    "all-outputs": true,
+    "on-click": "activate",
+    "sort-by-number": true
+  },
+  "clock": {
+    "format": "{:%H:%M  %a %d %b}",
+    "tooltip-format": "{:%A %d %B %Y}",
+    "interval": 30
+  },
+  "pulseaudio": {
+    "format": "{volume}%",
+    "format-muted": "Muted",
+    "on-click": "pavucontrol",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ -l 1.0",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- -l 1.0",
+    "scroll-step": 5,
+    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  },
+  "network": {
+    "format": "{ifname}: {signalStrength}%",
+    "format-wifi": "",
+    "format-ethernet": "",
+    "format-disconnected": "",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}/{cidr}",
+    "on-click": "kitty -e nmtui"
+  },
+  "custom/power": {
+    "format": "",
+    "tooltip-format": "Shutdown / Reboot / Sleep",
+    "on-click": "~/.config/waybar/scripts/power.sh"
+  },
+  "tray": {
+    "icon-size": 20,
+    "spacing": 10,
+    "show-passive-items": true
+  }
+}

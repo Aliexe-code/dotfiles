@@ -1,0 +1,61 @@
+# =====================================================================
+# CachyOS + Niri Desktop Environment Core Software Stack
+# =====================================================================
+
+# Compositor & Display
+niri
+xwayland-satellite
+ly
+
+# Status Bar, Notifications & Launchers
+waybar
+fuzzel
+mako
+
+# Screenshot & Clipboard
+grim
+slurp
+satty
+wl-clipboard
+cliphist
+
+# Idle & Screen Lock
+swaylock
+swayidle
+
+# Audio & Media Controls
+pipewire
+wireplumber
+pavucontrol
+playerctl
+brightnessctl
+
+# Terminals & Shell
+kitty
+alacritty
+fish
+
+# System Monitoring & CLI Tools
+btop
+fastfetch
+lazygit
+git
+gh
+fd
+ripgrep
+jq
+tree
+
+# GUI Applications (Native)
+librewolf
+nemo
+gparted
+mpv
+betterbird-bin
+
+# Foreign / AUR Applications
+audiorelay
+gitkraken
+rustdesk
+spotify-adblock-git
+tiri-bin

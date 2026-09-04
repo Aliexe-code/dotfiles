@@ -1,0 +1,8 @@
+[general]
+fullscreen = false
+early-exit = ["copy"]
+copy-command = "wl-copy"
+output-filename = "~/Pictures/Screenshots/Screenshot_%Y-%m-%d_%H-%M-%S.png"
+initial-tool = "rectangle"
+corner-roundness = 8
+save-after-copy = false

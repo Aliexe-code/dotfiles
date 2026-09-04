@@ -1,0 +1,28 @@
+# Backups and temporary files
+*.bak
+*.bak.*
+*~
+*.swp
+*.swo
+
+# History & cache
+*history*
+*.log
+fish_variables
+Cache/
+cachedData/
+
+# Credentials & secrets
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+*.env
+*.env.*
+auth.json
+hosts.yml
+save.txt
+
+# OS artifacts
+.DS_Store
+Thumbs.db
