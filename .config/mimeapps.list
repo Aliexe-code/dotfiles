@@ -1,0 +1,14 @@
+
+[Default Applications]
+text/html=librewolf.desktop
+x-scheme-handler/http=librewolf.desktop
+x-scheme-handler/https=librewolf.desktop
+x-scheme-handler/about=librewolf.desktop
+x-scheme-handler/unknown=librewolf.desktop
+application/pdf=org.kde.okular.desktop
+video/mp4=mpv.desktop
+video/x-matroska=mpv.desktop
+video/webm=mpv.desktop
+video/x-avi=mpv.desktop
+video/quicktime=mpv.desktop
+x-scheme-handler/discord-424004941485572097=discord-424004941485572097.desktop
