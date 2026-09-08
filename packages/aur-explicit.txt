@@ -1,5 +1,6 @@
 audiorelay
+discord-ptb
 gitkraken
+rpcs3-git
 rustdesk
-spotify-adblock-git
 tiri-bin

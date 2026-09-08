@@ -1,6 +1,5 @@
 7zip
 accountsservice
-alacritty
 alsa-firmware
 alsa-plugins
 alsa-utils
@@ -39,6 +38,7 @@ cachyos-v4-mirrorlist
 cachyos-wallpapers
 cantarell-fonts
 chwd
+claude-code
 cliphist
 cpupower
 cryptsetup
@@ -55,11 +55,13 @@ efibootmgr
 efitools
 egl-wayland
 ethtool
+evince
 exfatprogs
 f2fs-tools
 fastfetch
 ffmpegthumbnailer
-flameshot
+file-roller
+flatpak
 fsarchiver
 fuzzel
 gemini-cli
@@ -74,6 +76,7 @@ gst-libav
 gst-plugin-pipewire
 gst-plugins-bad
 gst-plugins-ugly
+handbrake
 hdparm
 hwdetect
 hwinfo
@@ -85,6 +88,7 @@ inetutils
 intel-ucode
 iwd
 jfsutils
+kdenlive
 kitty
 lazygit
 less
@@ -117,7 +121,6 @@ man-db
 mangowm
 man-pages
 mdadm
-meld
 mesa-utils
 mkinitcpio
 modemmanager
@@ -128,6 +131,7 @@ nano-syntax-highlighting
 ncdu
 nemo
 neofetch
+neovim
 netctl
 networkmanager
 network-manager-applet
@@ -143,6 +147,8 @@ npm
 nss-mdns
 nvidia-settings
 nvidia-utils
+obs-studio
+okular
 onlyoffice-bin
 opencl-nvidia
 openssh
@@ -165,6 +171,13 @@ pv
 python
 python-defusedxml
 python-packaging
+qbittorrent
+qt5-base
+qt5-svg
+qt5-wayland
+qt5-websockets
+qt5-x11extras
+qt5-xmlpatterns
 realtime-privileges
 rebuild-detector
 reflector
@@ -179,7 +192,6 @@ smartmontools
 s-nail
 snapper
 sof-firmware
-spotify-launcher
 sudo
 sway
 swayidle
@@ -190,6 +202,7 @@ tor
 torbrowser-launcher
 ttf-bitstream-vera
 ttf-dejavu
+ttf-jetbrains-mono-nerd
 ttf-liberation
 ttf-meslo-nerd
 ttf-opensans
@@ -210,6 +223,7 @@ which
 wireplumber
 wl-clipboard
 wpa_supplicant
+xdg-desktop-portal-gnome
 xdg-user-dirs
 xfsprogs
 xl2tpd

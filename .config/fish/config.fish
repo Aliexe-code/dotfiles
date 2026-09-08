@@ -26,3 +26,5 @@ fish_add_path $HOME/.grok/bin
 
 # Added by Antigravity CLI installer
 set -gx PATH "/home/ali/.local/bin" $PATH
+set -gx PATH $HOME/.npm-global/bin $PATH
+set -gx PATH $HOME/go/bin $PATH
