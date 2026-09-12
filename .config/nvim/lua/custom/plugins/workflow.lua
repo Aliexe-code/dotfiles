@@ -216,8 +216,28 @@ vim.keymap.set('n', '<leader>wo', '<Cmd>only<CR>', { desc = 'Window: only' })
 vim.keymap.set('n', '<leader>ww', '<Cmd>w<CR>', { desc = 'Write file' })
 vim.keymap.set('n', '<leader>qq', '<Cmd>qa<CR>', { desc = 'Quit all' })
 
--- Toggle comments on selected text or the current section
-vim.keymap.set({ 'n', 'v' }, '<leader>R', 'gc', { desc = 'Toggle comment (line/selection)', remap = true })
+-- Toggle comment: Space + /  (line in normal, selection in visual)
+-- Uses Comment.nvim (already loaded above). Fuzzy buffer search stays on <leader>f/
+vim.keymap.set('n', '<leader>/', function()
+  require('Comment.api').toggle.linewise.current()
+end, { desc = 'Toggle comment (line)', silent = true })
+
+vim.keymap.set('x', '<leader>/', function()
+  local esc = vim.api.nvim_replace_termcodes('<Esc>', true, false, true)
+  vim.api.nvim_feedkeys(esc, 'nx', false)
+  require('Comment.api').toggle.linewise(vim.fn.visualmode())
+end, { desc = 'Toggle comment (selection)', silent = true })
+
+-- Block comment toggle (/* … */) when the filetype supports it
+vim.keymap.set('n', '<leader>?', function()
+  require('Comment.api').toggle.blockwise.current()
+end, { desc = 'Toggle block comment', silent = true })
+
+vim.keymap.set('x', '<leader>?', function()
+  local esc = vim.api.nvim_replace_termcodes('<Esc>', true, false, true)
+  vim.api.nvim_feedkeys(esc, 'nx', false)
+  require('Comment.api').toggle.blockwise(vim.fn.visualmode())
+end, { desc = 'Toggle block comment (selection)', silent = true })
 
 ------------------------------------------------------------
 -- which-key groups (Space menu)

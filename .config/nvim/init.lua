@@ -201,13 +201,23 @@ do
     update_in_insert = false,
     severity_sort = true,
     float = { border = 'rounded', source = 'if_many' },
-    underline = { severity = { min = vim.diagnostic.severity.WARN } },
-
-    -- Can switch between these as you prefer
-    virtual_text = true, -- Text shows up at the end of the line
-    virtual_lines = false, -- Text shows up underneath the line, with virtual lines
-
-    -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
+    -- Show notices/hints too (unused code etc.)
+    underline = { severity = { min = vim.diagnostic.severity.HINT } },
+    virtual_text = {
+      source = 'if_many',
+      spacing = 2,
+      severity = { min = vim.diagnostic.severity.HINT },
+      prefix = '●',
+    },
+    virtual_lines = false,
+    signs = {
+      text = {
+        [vim.diagnostic.severity.ERROR] = 'E',
+        [vim.diagnostic.severity.WARN] = 'W',
+        [vim.diagnostic.severity.INFO] = 'I',
+        [vim.diagnostic.severity.HINT] = 'H',
+      },
+    },
     jump = {
       on_jump = function(_, bufnr)
         vim.diagnostic.open_float {
@@ -1160,7 +1170,7 @@ do
   --
   require 'kickstart.plugins.debug'
   require 'kickstart.plugins.indent_line'
-  -- require 'kickstart.plugins.lint'
+  require 'kickstart.plugins.lint'
   require 'kickstart.plugins.autopairs'
   require 'kickstart.plugins.neo-tree'
 
