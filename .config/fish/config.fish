@@ -28,3 +28,8 @@ fish_add_path $HOME/.grok/bin
 set -gx PATH "/home/ali/.local/bin" $PATH
 set -gx PATH $HOME/.npm-global/bin $PATH
 set -gx PATH $HOME/go/bin $PATH
+
+# V programming language
+fish_add_path $HOME/.local/share/v
+# Release tarball ships Windows tcc.exe; use system gcc
+set -gx VFLAGS '-cc gcc'
