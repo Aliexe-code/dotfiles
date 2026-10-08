@@ -545,9 +545,8 @@ do
       { '<leader>t', group = '[T]erminal / Toggle' },
       { '<leader>b', group = '[B]uffer' },
       { '<leader>c', group = '[C]ode' },
-      { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
+      { '<leader>h', group = 'Git', mode = { 'n', 'v' } }, -- gitsigns hunks + LazyGit + git pickers
       { 'gr', group = 'LSP Actions', mode = { 'n' } },
-      { '<leader>v', group = '[V]lang' },
     },
   }
 
@@ -728,7 +727,7 @@ do
   vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })
   vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
-  -- V Language keymaps live in lua/custom/plugins/vlang.lua (<leader>vr / vb / …)
+  -- Git workflow (LazyGit + pickers) lives in lua/custom/plugins/git.lua
 
   -- Add Telescope-based LSP pickers when an LSP attaches to a buffer.
   -- If you later switch picker plugins, this is where to update these mappings.
