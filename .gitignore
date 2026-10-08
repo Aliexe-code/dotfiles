@@ -1,9 +1,13 @@
 # Backups and temporary files
 *.bak
 *.bak.*
+config.backup.*
 *~
 *.swp
 *.swo
+
+# Spectacle writes backups of its own settings
+spectaclerc.bak*
 
 # History & cache
 *history*

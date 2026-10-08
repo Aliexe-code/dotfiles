@@ -1,39 +1,50 @@
 # =====================================================================
-# CachyOS + Niri Desktop Environment Core Software Stack
+# CachyOS + i3 Window Manager Desktop Core Software Stack
 # =====================================================================
 
-# Compositor & Display
-niri
-xwayland-satellite
+# Display Server & Session
+xorg-server
+xorg-xinit
+xorg-xrandr
+xorg-xset
+xorg-setxkbmap
 ly
 
-# Status Bar, Notifications & Launchers
-waybar
-fuzzel
-mako
+# Window Manager & Bar
+i3-wm
+i3lock-color
+polybar
 
-# Screenshot & Clipboard
-grim
-slurp
-satty
-wl-clipboard
-cliphist
+# Launcher, Notifications & Compositor
+rofi
+dunst
+picom
 
-# Idle & Screen Lock
-swaylock
-swayidle
+# Screenshot
+spectacle
 
 # Audio & Media Controls
 pipewire
+pipewire-pulse
 wireplumber
 pavucontrol
 playerctl
+pamixer
 brightnessctl
+xob
 
 # Terminals & Shell
+ghostty
 kitty
 alacritty
 fish
+
+# Wallpaper & Autostart
+feh
+dex
+
+# Polkit Agent
+polkit-gnome
 
 # System Monitoring & CLI Tools
 btop
@@ -45,6 +56,7 @@ fd
 ripgrep
 jq
 tree
+xclip
 
 # GUI Applications (Native)
 librewolf

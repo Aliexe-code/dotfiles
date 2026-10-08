@@ -104,10 +104,22 @@ do
   -- Set font for GUI mode (Neovide, etc.)
   vim.o.guifont = 'JetBrainsMono NF:h14'
 
-  -- Disable unused remote providers (removes checkhealth noise; not needed for Rust)
+  -- Disable unused remote providers (removes checkhealth noise)
   vim.g.loaded_python3_provider = 0
   vim.g.loaded_ruby_provider = 0
   vim.g.loaded_perl_provider = 0
+
+  -- Define filetypes early to silence vim.lsp unknown-filetype warnings (gopls/v_analyzer use these)
+  pcall(function()
+    vim.filetype.add({
+      extension = {
+        vsh = 'v',
+        vv = 'v',
+        tmpl = 'gotmpl',
+        gotmpl = 'gotmpl',
+      },
+    })
+  end)
 
   -- [[ Setting options ]]
   --  See `:help vim.o`
@@ -338,19 +350,22 @@ do
     vim.keymap.set(mode, '<C-k0>', zoom_reset, { desc = 'Zoom Reset' })
   end
 
-  -- Space z  (which-key friendly)
-  vim.keymap.set('n', '<leader>zi', zoom_in, { desc = '[Z]oom In' })
-  vim.keymap.set('n', '<leader>z+', zoom_in, { desc = '[Z]oom In' })
-  vim.keymap.set('n', '<leader>z=', zoom_in, { desc = '[Z]oom In' })
-  vim.keymap.set('n', '<leader>zo', zoom_out, { desc = '[Z]oom Out' })
-  vim.keymap.set('n', '<leader>z-', zoom_out, { desc = '[Z]oom Out' })
-  vim.keymap.set('n', '<leader>z0', zoom_reset, { desc = '[Z]oom Reset' })
+  -- Space z  (which-key friendly) — moved to <leader>Z to free <leader>z for Zig (<leader>z* Zig IDE)
+  -- Previous <leader>z is now Zig: see lua/custom/plugins/zig.lua
+  vim.keymap.set('n', '<leader>Zi', zoom_in, { desc = '[Z]oom In' })
+  vim.keymap.set('n', '<leader>Z+', zoom_in, { desc = '[Z]oom In' })
+  vim.keymap.set('n', '<leader>Z=', zoom_in, { desc = '[Z]oom In' })
+  vim.keymap.set('n', '<leader>Zo', zoom_out, { desc = '[Z]oom Out' })
+  vim.keymap.set('n', '<leader>Z-', zoom_out, { desc = '[Z]oom Out' })
+  vim.keymap.set('n', '<leader>Z0', zoom_reset, { desc = '[Z]oom Reset' })
+  -- Keep Ctrl+=/- and Space Z as Zoom; Zig uses <leader>z (see zig.lua)
+  vim.keymap.set('n', '<leader>tz', zoom_in, { desc = '[T]oggle [Z]oom In (legacy)' })
 
   vim.schedule(function()
     local ok, wk = pcall(require, 'which-key')
     if ok then
       wk.add({
-        { '<leader>z', group = '[Z]oom' },
+        { '<leader>Z', group = '[Z]oom' },
       })
     end
   end)
@@ -592,23 +607,51 @@ do
   -- - sr)'  - [S]urround [R]eplace [)] [']
   require('mini.surround').setup()
 
-  -- Simple and easy statusline.
-  --  You could remove this setup call if you don't like it,
-  --  and try some other statusline plugin
-  local statusline = require 'mini.statusline'
-  -- Set `use_icons` to true if you have a Nerd Font
-  statusline.setup { use_icons = vim.g.have_nerd_font }
-
-  -- You can configure sections in the statusline by overriding their
-  -- default behavior. For example, here we set the section for
-  -- cursor location to LINE:COLUMN
-  ---@diagnostic disable-next-line: duplicate-set-field
-  statusline.section_location = function() return '%2l:%-2v' end
-  ---@diagnostic disable-next-line: duplicate-set-field
-  statusline.section_filename = function() return '' end
+  -- Statusline: replaced mini.statusline with lualine for lang icons + nice bottom bar
+  -- mini.statusline disabled — lualine takes over (see below lualine setup)
+  -- If you prefer minimal, swap back: require('mini.statusline').setup { use_icons = vim.g.have_nerd_font }
 
   -- ... and there is more!
   --  Check out: https://github.com/nvim-mini/mini.nvim
+end
+
+-- Lualine bottom bar with lang icons (needs nvim-web-devicons via mini.icons mock)
+do
+  vim.pack.add {
+    'https://github.com/nvim-tree/nvim-web-devicons',
+    'https://github.com/nvim-lualine/lualine.nvim',
+  }
+  local ok, lualine = pcall(require, 'lualine')
+  if ok then
+    lualine.setup {
+      options = {
+        theme = 'auto', -- follows catppuccin/tokyonight
+        globalstatus = true,
+        icons_enabled = vim.g.have_nerd_font,
+        component_separators = { left = '', right = '' },
+        section_separators = { left = '', right = '' },
+        disabled_filetypes = { statusline = {}, winbar = {} },
+      },
+      sections = {
+        lualine_a = { 'mode' },
+        lualine_b = { 'branch', 'diff', 'diagnostics' },
+        lualine_c = { { 'filename', path = 1, symbols = { modified = '  ', readonly = '  ', unnamed = '[No Name]' } } },
+        lualine_x = { 'encoding', { 'fileformat', symbols = { unix = '', dos = '', mac = '' } }, 'filetype' },
+        lualine_y = { 'progress' },
+        lualine_z = { 'location' },
+      },
+      inactive_sections = {
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = { 'filename' },
+        lualine_x = { 'location' },
+        lualine_y = {},
+        lualine_z = {},
+      },
+      tabline = {},
+      extensions = { 'neo-tree', 'toggleterm', 'quickfix', 'man' },
+    }
+  end
 end
 
 -- ============================================================
@@ -857,11 +900,55 @@ do
   ---@type table<string, vim.lsp.Config>
   local servers = {
     -- clangd = {},
-    -- gopls = {},
     -- pyright = {},
     -- tsc = {},
     --
     -- See: https://github.com/neovim/nvim-lspconfig
+
+    -- Go: gopls with best-practice settings (gofumpt, staticcheck, hints, analyses)
+    -- See: https://github.com/golang/tools/blob/master/gopls/doc/settings.md
+    gopls = {
+      settings = {
+        gopls = {
+          gofumpt = true,
+          codelenses = {
+            gc_details = true,
+            generate = true,
+            regenerate_cgo = true,
+            run_govulncheck = true,
+            test = true,
+            tidy = true,
+            upgrade_dependency = true,
+            vendor = true,
+          },
+          hints = {
+            assignVariableTypes = true,
+            compositeLiteralFields = true,
+            compositeLiteralTypes = true,
+            constantValues = true,
+            functionTypeParameters = true,
+            parameterNames = true,
+            rangeVariableTypes = true,
+          },
+          analyses = {
+            nilness = true,
+            unusedparams = true,
+            unusedvariable = true,
+            unusedwrite = true,
+            useany = true,
+            shadow = true,
+            ST1000 = true,
+            ST1003 = true,
+            fieldalignment = true,
+          },
+          usePlaceholders = true,
+          completeUnimported = true,
+          staticcheck = true,
+          directoryFilters = { '-.git', '-.vscode', '-.idea', '-node_modules', '-.vscode-test' },
+          semanticTokens = true,
+        },
+      },
+    },
 
      stylua = {}, -- Used to format Lua code
 
@@ -879,17 +966,56 @@ do
            break
          end
        end
-       local vroot = vim.fn.expand '~/.local/share/v'
-       return {
-         cmd = cmd,
-         cmd_env = {
-           PATH = (vim.fn.isdirectory(vroot) == 1 and (vroot .. ':') or '') .. (vim.env.PATH or ''),
-           VROOT = vim.fn.isdirectory(vroot) == 1 and vroot or vim.env.VROOT,
-         },
-       }
-     end)(),
+        local vroot = vim.fn.expand '~/.local/share/v'
+        return {
+          cmd = cmd,
+          cmd_env = {
+            PATH = (vim.fn.isdirectory(vroot) == 1 and (vroot .. ':') or '') .. (vim.env.PATH or ''),
+            VROOT = vim.fn.isdirectory(vroot) == 1 and vroot or vim.env.VROOT,
+          },
+          filetypes = { 'v' },
+        }
+       end)(),
 
-     -- Special Lua Config, as recommended by neovim help docs
+        ols = {
+        cmd = { vim.fn.stdpath('data') .. '/mason/bin/ols' },
+        filetypes = { 'odin' },
+        root_markers = { 'ols.json', '.git', '.odin' },
+      },
+
+      -- Zig: zls via Mason or system (build from source if version mismatch; see lua/custom/plugins/zig.lua)
+      zls = (function()
+        local candidates = {
+          vim.fn.stdpath('data') .. '/mason/bin/zls',
+          'zls',
+        }
+        local cmd = { 'zls' }
+        for _, c in ipairs(candidates) do
+          if c == 'zls' or vim.fn.executable(c) == 1 then
+            cmd = { c }
+            break
+          end
+        end
+        return {
+          cmd = cmd,
+          filetypes = { 'zig', 'zir' },
+          root_markers = { 'build.zig', 'build.zig.zon', '.git' },
+        }
+      end)(),
+
+      -- Datafiles: broad support for md/txt/sql/toml/json/yaml/csv/xml...
+      -- All filetypes get Treesitter above; these give LSP smarts where useful
+      jsonls = {}, -- json
+      yamlls = {}, -- yaml
+      taplo = {}, -- toml
+      marksman = {}, -- markdown
+      sqlls = { -- sql
+        filetypes = { 'sql', 'mysql', 'psql' },
+        root_markers = { '.sqllsrc', '.git' },
+      },
+      lemminx = {}, -- xml
+
+      -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
       on_init = function(client)
         client.server_capabilities.documentFormattingProvider = false -- Disable formatting (formatting is done by stylua)
@@ -946,7 +1072,23 @@ do
   -- You can press `g?` for help in this menu.
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
-    -- You can add other tools here that you want Mason to install
+    -- Go toolchain — LSP + formatters + linters + DAP
+    'gopls',
+    'golangci-lint',
+    'gofumpt',
+    'goimports',
+    'golines',
+    'gomodifytags',
+    'impl',
+    'delve',
+    'staticcheck',
+    -- Datafiles — formatters (LSPs already via servers: jsonls, yamlls, taplo, marksman, sqlls, lemminx)
+    'prettier',
+    'sqlfluff',
+    -- C# — Roslyn LSP + csharpier formatter + netcoredbg (wired in lua/custom/plugins/csharp.lua)
+    'roslyn-language-server',
+    'csharpier',
+    'netcoredbg',
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -970,11 +1112,28 @@ do
       -- You can specify filetypes to autoformat on save here:
       local enabled_filetypes = {
         lua = true,
+        cs = true,
         v = true,
+        odin = true,
+        zig = true,
+        go = true,
+        gomod = true,
+        gowork = true,
+        gotmpl = true,
+        json = true,
+        jsonc = true,
+        yaml = true,
+        toml = true,
+        markdown = true,
+        sql = true,
+        xml = true,
+        csv = true,
+        ini = true,
+        -- txt has no formatter, keep as-is
         -- python = true,
       }
       if enabled_filetypes[vim.bo[bufnr].filetype] then
-        return { timeout_ms = 500 }
+        return { timeout_ms = 1000, lsp_format = 'fallback' }
       else
         return nil
       end
@@ -985,8 +1144,25 @@ do
     -- You can also specify external formatters in here.
     formatters_by_ft = {
       lua = { 'stylua' },
+      cs = { 'csharpier', lsp_format = 'fallback' }, -- dotnet format via Roslyn if csharpier missing
+      go = { 'goimports', 'gofumpt' },
+      -- Alternative: use golines after gofumpt for line wrapping (uncomment if desired)
+      -- go = { 'goimports', 'gofumpt', 'golines' },
+      gomod = { 'gofumpt' },
+      gowork = { 'gofumpt' },
       -- Prefer v-analyzer LSP formatting; fall back to `v fmt` if available
       v = { 'v', lsp_format = 'prefer' },
+      odin = { 'odinfmt' },
+      zig = { 'zigfmt', lsp_format = 'fallback' },
+      json = { 'prettier', lsp_format = 'fallback' },
+      jsonc = { 'prettier', lsp_format = 'fallback' },
+      yaml = { 'prettier', lsp_format = 'fallback' },
+      toml = { lsp_format = 'fallback' }, -- taplo LSP
+      markdown = { 'prettier', lsp_format = 'fallback' },
+      sql = { 'sqlfluff', 'sql_formatter', lsp_format = 'fallback' },
+      xml = { lsp_format = 'fallback' }, -- lemminx
+      csv = { lsp_format = 'fallback' },
+      ini = { lsp_format = 'fallback' },
       -- Conform can also run multiple formatters sequentially
       -- python = { "isort", "black" },
       --
@@ -1003,6 +1179,16 @@ do
           return 'v'
         end,
         args = { 'fmt', '-w', '$FILENAME' },
+        stdin = false,
+      },
+      odinfmt = {
+        command = vim.fn.stdpath('data') .. '/mason/bin/odinfmt',
+        args = { '$FILENAME' },
+        stdin = false,
+      },
+      zigfmt = {
+        command = 'zig',
+        args = { 'fmt', '$FILENAME' },
         stdin = false,
       },
     },
@@ -1069,9 +1255,21 @@ do
     },
 
     completion = {
-      -- By default, you may press `<c-space>` to show the documentation.
-      -- Optionally, set `auto_show = true` to show the documentation after a delay.
-      documentation = { auto_show = false, auto_show_delay_ms = 500 },
+      menu = {
+        border = 'rounded',
+        scrollbar = true,
+        draw = {
+          -- VSCode-like columns: [icon] [label + detail] [kind]
+          columns = { { 'kind_icon' }, { 'label', 'label_description', gap = 1 }, { 'kind' } },
+          treesitter = { 'lsp' },
+        },
+      },
+      -- Auto-show docs on selection (VSCode-style); <c-space> still toggles manually
+      documentation = {
+        auto_show = true,
+        auto_show_delay_ms = 200,
+        window = { border = 'rounded', scrollbar = true },
+      },
     },
 
     sources = {
@@ -1088,7 +1286,7 @@ do
     fuzzy = { implementation = 'prefer_rust' },
 
     -- Shows a signature help window while you type arguments for a function
-    signature = { enabled = true },
+    signature = { enabled = true, window = { border = 'rounded' } },
   }
 end
 
@@ -1105,8 +1303,18 @@ do
   -- NOTE: You can also specify a branch or a specific commit
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
-  -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'rust', 'toml', 'vim', 'vimdoc', 'v' }
+  -- Ensure basic parsers are installed — datafiles + code (all-file support)
+  local parsers = {
+    -- core / docs
+    'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'regex', 'vim', 'vimdoc',
+    -- data / config
+    'json', 'json5', 'yaml', 'toml', 'xml', 'csv', 'tsv', 'ini', 'editorconfig', 'properties', 'dockerfile', 'gitignore', 'git_config', 'gitcommit', 'git_rebase',
+    -- sql / data
+    'sql',
+    -- code you already use
+    'v', 'odin', 'zig', 'go', 'gomod', 'gosum', 'gowork', 'python', 'javascript', 'typescript', 'tsx', 'css', 'scss', 'jsdoc',
+    'c_sharp',
+  }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer

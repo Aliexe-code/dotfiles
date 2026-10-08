@@ -202,6 +202,22 @@ end
 -- Buffers & windows
 ------------------------------------------------------------
 vim.keymap.set('n', '<leader>bd', '<Cmd>bdelete<CR>', { desc = 'Buffer: delete' })
+vim.keymap.set('n', '<leader>bo', function()
+  local current = vim.api.nvim_get_current_buf()
+  local closed, kept = 0, 0
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if buf ~= current and vim.bo[buf].buflisted then
+      if vim.bo[buf].modified then
+        kept = kept + 1
+      else
+        vim.cmd('bdelete! ' .. buf)
+        closed = closed + 1
+      end
+    end
+  end
+  local note = kept > 0 and (' (kept ' .. kept .. ' unsaved)') or ''
+  vim.notify('Buffer: only — closed ' .. closed .. ' buffer(s)' .. note)
+end, { desc = 'Buffer: only (close other buffers)' })
 vim.keymap.set('n', '<leader>bn', '<Cmd>bnext<CR>', { desc = 'Buffer: next' })
 vim.keymap.set('n', '<leader>bp', '<Cmd>bprevious<CR>', { desc = 'Buffer: prev' })
 vim.keymap.set('n', '<S-l>', '<Cmd>bnext<CR>', { desc = 'Buffer: next' })

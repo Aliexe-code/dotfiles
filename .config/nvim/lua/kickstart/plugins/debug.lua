@@ -43,6 +43,7 @@ require('mason-nvim-dap').setup {
     -- Update this to ensure that you have the debuggers for the langs you want
     'codelldb', -- Rust (used by rustaceanvim)
     'delve', -- Go (kickstart example)
+    'netcoredbg', -- C# (wired in lua/custom/plugins/csharp.lua)
   },
 }
 

@@ -1,6 +1,7 @@
 audiorelay
 discord-ptb
-gitkraken
-rpcs3-git
-rustdesk
-tiri-bin
+kwin-scripts-krohnkite-git
+neofetch
+spotify-adblock
+tlauncher-installer
+zigup

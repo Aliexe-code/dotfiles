@@ -1,14 +1,27 @@
+[Added Associations]
+application/json=vscodium.desktop;
+application/x-docbook+xml=vscodium.desktop;
+application/x-yaml=vscodium.desktop;
+text/markdown=vscodium.desktop;
+text/plain=vscodium.desktop;
+text/x-cmake=vscodium.desktop;
 
 [Default Applications]
-text/html=librewolf.desktop
-x-scheme-handler/http=librewolf.desktop
-x-scheme-handler/https=librewolf.desktop
-x-scheme-handler/about=librewolf.desktop
-x-scheme-handler/unknown=librewolf.desktop
+application/json=vscodium.desktop;
 application/pdf=org.kde.okular.desktop
+application/x-docbook+xml=vscodium.desktop;
+application/x-yaml=vscodium.desktop;
+text/html=librewolf.desktop
+text/markdown=vscodium.desktop;
+text/plain=vscodium.desktop;
+text/x-cmake=vscodium.desktop;
 video/mp4=mpv.desktop
-video/x-matroska=mpv.desktop
+video/quicktime=mpv.desktop
 video/webm=mpv.desktop
 video/x-avi=mpv.desktop
-video/quicktime=mpv.desktop
+video/x-matroska=mpv.desktop
+x-scheme-handler/about=librewolf.desktop
 x-scheme-handler/discord-424004941485572097=discord-424004941485572097.desktop
+x-scheme-handler/http=librewolf.desktop
+x-scheme-handler/https=librewolf.desktop
+x-scheme-handler/unknown=librewolf.desktop

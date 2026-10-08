@@ -1,6 +1,11 @@
 -- V language: run / build / test / vet / fmt via <leader>v*
 -- Requires V at ~/.local/share/v (or on PATH). Lint comes from v-analyzer (LSP).
 
+-- Define vsh/vv filetypes to silence vim.lsp unknown filetype warning (v_analyzer uses v,vsh,vv)
+pcall(function()
+  vim.filetype.add({ extension = { vsh = 'v', vv = 'v' } })
+end)
+
 local V_HOME = vim.fn.expand '~/.local/share/v'
 local V_BIN = V_HOME .. '/v'
 

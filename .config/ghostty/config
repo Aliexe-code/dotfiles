@@ -1,0 +1,31 @@
+# Ghostty config — Tokyo Night theme (set 2026-09-22)
+# Full options: https://ghostty.org/docs/config
+
+# --- Theme ---
+theme = "TokyoNight"
+background-opacity = 0.92
+background-blur = true
+
+# --- Font ---
+font-family = "JetBrainsMono Nerd Font"
+font-size = 12
+font-thicken = false
+adjust-cell-height = "5%"
+
+# --- Window ---
+window-padding-x = 12
+window-padding-y = 12
+window-theme = "ghostty"
+
+# --- Cursor ---
+cursor-style = "bar"
+cursor-style-blink = true
+cursor-opacity = 1.0
+
+# --- Behavior ---
+scrollback-limit = 100000
+copy-on-select = true
+mouse-hide-while-typing = true
+shell-integration-features = true
+confirm-close-surface = false
+quit-after-last-window-closed = true

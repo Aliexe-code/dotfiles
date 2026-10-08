@@ -1,0 +1,230 @@
+# =====================================================================
+# i3 configuration — CachyOS professional setup (keyboard-driven)
+# Mod key is the "Super"/Windows key (Mod4)
+# Reload:   $mod+Shift+c       Restart: $mod+Shift+r       Logout: $mod+Shift+e
+# =====================================================================
+
+set $mod Mod4
+font pango:MesloLGM Nerd Font 10
+
+# ---------------------------------------------------------------------
+# Gaps and borders (gaps are built into i3 core since 4.22)
+# ---------------------------------------------------------------------
+default_border pixel 2
+gaps inner 12
+gaps outer 6
+smart_gaps on
+smart_borders on
+
+# ---------------------------------------------------------------------
+# Variables
+# ---------------------------------------------------------------------
+set $term        ghostty
+set $browser     librewolf
+set $editor      vscodium
+set $menu        rofi -show drun
+set $fileman     nemo
+set $lock        "i3lock --color 2e3440 --blur 5"
+
+# ---------------------------------------------------------------------
+# App launcher
+# ---------------------------------------------------------------------
+bindsym $mod+d exec $menu
+
+# ---------------------------------------------------------------------
+# Launch apps
+# ---------------------------------------------------------------------
+bindsym $mod+Return  exec $term
+bindsym $mod+b        exec $browser
+bindsym $mod+Shift+b  exec torbrowser
+bindsym $mod+e        exec $editor
+bindsym $mod+Shift+n  exec $fileman
+bindsym $mod+Shift+s  exec "rofi -show ssh"
+bindsym $mod+grave    exec "ghostty -e btop"
+bindsym $mod+Ctrl+Return exec "ghostty -e btop"
+
+# ---------------------------------------------------------------------
+# Extra app shortcuts (memorize)
+# ---------------------------------------------------------------------
+bindsym $mod+m        exec spotify
+bindsym $mod+Shift+a  exec audiorelay
+
+# ---------------------------------------------------------------------
+# Screenshots — Spectacle (Print = select region, GUI kept)
+# ---------------------------------------------------------------------
+bindsym Print exec spectacle -r
+bindsym Shift+Print exec spectacle -f
+bindsym $mod+Print exec spectacle -a
+
+# kill focused window - layout-independent (single bindcode covers both US/AR, same keycode 24)
+bindcode $mod+24 kill
+
+# lock screen & logout
+bindsym $mod+l exec $lock
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+
+# power menu (mirrors the topbar power icon) + direct power shortcuts
+bindsym $mod+Shift+x exec ~/.config/polybar/scripts/power.sh
+
+bindsym $mod+Shift+z exec ~/.config/polybar/scripts/power.sh
+
+# ---------------------------------------------------------------------
+# Focus / movement (arrow keys, i3 default style)
+# ---------------------------------------------------------------------
+bindsym $mod+Left  focus left
+bindsym $mod+Down  focus down
+bindsym $mod+Up    focus up
+bindsym $mod+Right focus right
+
+# move focused window
+bindsym $mod+Shift+Left  move left
+bindsym $mod+Shift+Down  move down
+bindsym $mod+Shift+Up    move up
+bindsym $mod+Shift+Right move right
+
+# focus parent / child container
+bindsym $mod+a focus parent
+bindsym $mod+z focus child
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+
+# ---------------------------------------------------------------------
+# Layout / splitting
+# ---------------------------------------------------------------------
+bindsym $mod+h split horizontal
+bindsym $mod+v split vertical
+bindsym $mod+t split toggle
+
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+
+bindsym $mod+f fullscreen toggle
+bindsym $mod+Shift+w sticky toggle
+
+# ---------------------------------------------------------------------
+# Resize window ($mod+r, then arrows)
+# ---------------------------------------------------------------------
+mode "resize" {
+    bindsym Left       resize shrink width  10 px or 10 ppt
+    bindsym Down       resize grow   height 10 px or 10 ppt
+    bindsym Up         resize shrink height 10 px or 10 ppt
+    bindsym Right      resize grow   width  10 px or 10 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r   mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# ---------------------------------------------------------------------
+# Workspaces (named for productivity)
+# ---------------------------------------------------------------------
+set $ws1  "1:  Web"
+set $ws2  "2:  Code"
+set $ws3  "3:  Term"
+set $ws4  "4:  Chat"
+set $ws5  "5:  Files"
+set $ws6  "6"
+set $ws7  "7"
+set $ws8  "8"
+set $ws9  "9"
+set $ws10 "10"
+
+# switch to workspace
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+
+
+# ---------------------------------------------------------------------
+# Background, compositor, notifications (fixed monitor + 144Hz)
+# ---------------------------------------------------------------------
+exec --no-startup-id "xset s off -dpms && xset s noblank"
+exec_always --no-startup-id "xrandr --output DP-0 --mode 1920x1080 --rate 143.85"
+exec_always --no-startup-id "feh --bg-fill ~/.config/i3/wallpaper.png"
+exec_always --no-startup-id "picom --experimental-backends"
+exec_always --no-startup-id "dunst"
+exec_always --no-startup-id "dex -a -s /etc/xdg/autostart/:~/.config/autostart/"
+exec_always --no-startup-id "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+
+# volume OSD pipe
+exec_always --no-startup-id "mkfifo /tmp/xobpipe 2>/dev/null; tail -f /tmp/xobpipe | xob -t 2170 & disown"
+
+# keyboard layout - us first so i3 shortcuts work by default, Alt+Shift toggles
+exec_always --no-startup-id "setxkbmap -layout us,eg -variant ,basic -option 'grp:alt_shift_toggle'"
+
+# ---------------------------------------------------------------------
+# Floating window rules
+# ---------------------------------------------------------------------
+for_window [class="^.*"] border pixel 2
+for_window [class="librewolf"] border none
+for_window [class="firefox"]   border none
+for_window [class="mpv"]       floating enable
+for_window [class="imv"]       floating enable
+for_window [class="zenity"]    floating enable
+for_window [class="cachyos-welcome"] floating enable
+for_window [class="Gnome-Calculator"] floating enable
+for_window [title="Calculator"] floating enable
+for_window [title="Timer"]      floating enable
+
+# ---------------------------------------------------------------------
+# Media / audio keys
+# ---------------------------------------------------------------------
+bindsym XF86AudioRaiseVolume exec "pamixer -ui 3 && pamixer --get-volume > /tmp/xobpipe"
+bindsym XF86AudioLowerVolume exec "pamixer -ud 3 && pamixer --get-volume > /tmp/xobpipe"
+bindsym XF86AudioMute exec "pamixer -t && pamixer --get-volume > /tmp/xobpipe"
+bindsym XF86AudioPlay    exec "playerctl play-pause"
+bindsym XF86AudioNext    exec "playerctl next"
+bindsym XF86AudioPrev    exec "playerctl previous"
+bindsym XF86MonBrightnessUp   exec "brightnessctl set +5%"
+bindsym XF86MonBrightnessDown exec "brightnessctl set 5%-"
+
+bindsym $mod+Shift+p exec gnome-calculator
+
+# ---------------------------------------------------------------------
+# Colors (Nord theme)
+# ---------------------------------------------------------------------
+set $bg       #2e3440
+set $bg-alt   #3b4252
+set $fg       #eceff4
+set $fg-dim   #d8dee9
+set $accent   #88c0d0
+set $muted    #4c566a
+set $urgent   #bf616a
+
+client.focused          $accent  $accent  $bg     $accent  $accent
+client.focused_inactive $muted   $muted   $fg-dim $muted   $muted
+client.unfocused        $muted   $muted   $fg-dim $muted   $muted
+client.urgent           $urgent  $urgent  $fg     $urgent  $urgent
+client.placeholder      $muted   $muted   $fg-dim $muted   $muted
+client.background       $bg
+
+# ---------------------------------------------------------------------
+# Bar: launch polybar
+# ---------------------------------------------------------------------
+exec_always --no-startup-id ~/.config/polybar/launch.sh
+
+# open a terminal on first workspace at startup (ghostty is $term)
+exec --no-startup-id "i3-msg 'workspace number 1; exec $term'"

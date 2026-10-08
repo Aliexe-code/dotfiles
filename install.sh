@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 
 echo -e "${BLUE}${BOLD}"
 echo "=========================================================="
-echo "    CachyOS + Niri + Waybar Dotfiles Installation Script  "
+echo "    CachyOS + i3 + Polybar Dotfiles Installation Script   "
 echo "=========================================================="
 echo -e "${NC}"
 

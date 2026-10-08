@@ -55,13 +55,9 @@ if [ -d "$DOTFILES_DIR/home" ]; then
 fi
 
 # Ensure scripts are executable
-chmod +x "$DOTFILES_DIR/.config/niri/scripts"/*.sh 2>/dev/null || true
-chmod +x "$DOTFILES_DIR/.config/waybar/scripts"/*.sh 2>/dev/null || true
-
-# Symlink custom screenshot binary to ~/.local/bin/screenshot
-if [ -f "$HOME/.config/niri/scripts/screenshot.sh" ]; then
-  ln -sfn "$HOME/.config/niri/scripts/screenshot.sh" "$HOME/.local/bin/screenshot"
-fi
+chmod +x "$DOTFILES_DIR/.config/polybar/scripts"/*.sh 2>/dev/null || true
+chmod +x "$DOTFILES_DIR/.config/polybar/launch.sh" 2>/dev/null || true
+chmod +x "$DOTFILES_DIR/scripts"/*.sh 2>/dev/null || true
 
 echo "==> Deploy complete!"
 [ -d "$BACKUP_DIR" ] && echo "==> Backups saved to: $BACKUP_DIR"
