@@ -1,73 +1,99 @@
 # =====================================================================
-# CachyOS + i3 Window Manager Desktop Core Software Stack
+# Fedora 44 (i3 spin) — core software stack
 # =====================================================================
+# Hand-maintained: this is what scripts/provision.sh installs.
+# Every name below was checked with `dnf repoquery <name>` on Fedora 44,
+# so nothing here needs RPM Fusion or a COPR.
+# packages/dnf-userinstalled.txt is the machine-generated snapshot; it is
+# for reference only and is deliberately not an install list.
 
-# Display Server & Session
-xorg-server
-xorg-xinit
-xorg-xrandr
-xorg-xset
-xorg-setxkbmap
-ly
+# Display server & session
+xorg-x11-server-Xorg
+xrandr
+xset
+setxkbmap
+lightdm
+lightdm-gtk
 
-# Window Manager & Bar
-i3-wm
-i3lock-color
+# Window manager
+i3
+i3lock
+
+# Bar, launcher, notifications, compositor
 polybar
-
-# Launcher, Notifications & Compositor
 rofi
 dunst
 picom
 
+# Polkit authentication agent — i3 autostarts /usr/libexec/xfce-polkit
+xfce-polkit
+
 # Screenshot
 spectacle
 
-# Audio & Media Controls
+# Audio & display controls
 pipewire
-pipewire-pulse
 wireplumber
 pavucontrol
 playerctl
 pamixer
 brightnessctl
-xob
 
-# Terminals & Shell
-ghostty
+# Terminal & shell — xfce4-terminal is $term in i3; kitty hosts btop
+xfce4-terminal
 kitty
-alacritty
-fish
+zsh
 
-# Wallpaper & Autostart
+# Wallpaper
 feh
-dex
 
-# Polkit Agent
-polkit-gnome
+# Screen lock & editor — i3 binds $lock to xsecurelock and $editor to codium
+xsecurelock
+codium
 
-# System Monitoring & CLI Tools
-btop
-fastfetch
-lazygit
+# Editors, VCS & CLI tools
+neovim
 git
 gh
-fd
 ripgrep
+fd-find
 jq
 tree
 xclip
+unzip
+btop
 
-# GUI Applications (Native)
-librewolf
+# File manager, media & calculator (i3 binds Mod+Shift+p to gnome-calculator)
 nemo
-gparted
 mpv
-betterbird-bin
+gnome-calculator
+xdg-user-dirs
 
-# Foreign / AUR Applications
-audiorelay
-gitkraken
-rustdesk
-spotify-adblock-git
-tiri-bin
+# Browsers and PDF
+librewolf
+okular
+torbrowser-launcher
+discord
+
+# X settings daemon (fonts/DPI/theme for non-GTK apps)
+xsettingsd
+fontconfig
+
+# ---------------------------------------------------------------------
+# Third-party repo needed:
+#   codium -> download.vscodium.com; scripts/provision.sh installs
+#             packages/third-party/vscodium.repo before the packages step,
+#             otherwise `codium` silently drops out of the install list and
+#             Mod+e (the $editor binding) is broken on a fresh machine.
+#
+# NOT installable from Fedora repos — provisioned separately:
+#   zellij               -> GitHub release binary into ~/.local/bin
+#   lazygit              -> `go install github.com/jesseduffield/lazygit@latest`
+#   oh-my-zsh + its zsh-autosuggestions / zsh-syntax-highlighting
+#                        -> git clones (the dnf versions do not satisfy
+#                           ZSH_PLUGINS, so we match what this machine runs)
+#   Zen browser          -> flatpak, see packages/flatpak.txt
+#   JetBrainsMono Nerd Font -> scripts/install-fonts.sh (no Nerd glyphs in
+#                           Fedora's jetbrains-mono-fonts; polybar/rofi/kitty
+#                           all require it)
+# ---------------------------------------------------------------------

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# What this repo tracks, and how each piece reaches a machine.
+# Sourced by scripts/sync.sh (home -> repo) and scripts/deploy.sh (repo -> home).
+# Keep both scripts reading this file; two lists that drift are worse than one.
+
+# Symlinked whole: the repo directory IS the live config, so edits are tracked
+# automatically and there is no copy to keep in sync.
+LINK_APPS=(i3 polybar picom rofi dunst kitty fontconfig gtk-3.0 xsettingsd nvim lazygit zellij)
+
+# Copied, single named file: these tools rewrite their own config directory
+# (btop rewrites btop.conf on exit; opencode/kilo drop node_modules, service.json
+# and package-lock.json next to the file we care about). Symlinking would put
+# generated junk into `git status`.
+COPY_APPS=("btop:btop.conf" "opencode:opencode.jsonc" "kilo:kilo.jsonc")
+
+# Copied single files that live directly in ~/.config.
+# mimeapps.list and spectaclerc are rewritten by xdg tools / Spectacle itself.
+COPY_FILES=(mimeapps.list spectaclerc)
+
+# Symlinked from repo/home/ into ~.
+LINK_HOME=(.zshrc .zshenv .gitconfig)
+
+# Kept in the repo but never deployed: documentation/fragments read by scripts.
+# .config/spectacle/ is referenced by restore-screenshot-keys.sh as $DOTFILES_DIR,
+# not as ~/.config/spectacle.
+REPO_ONLY=(spectacle)
+
+# Never captured from the machine, whatever else is in ~/.config. Browser
+# profiles (LibreWolf ~276M, Zen ~526M) hold cookies, history and passwords.
+FORBIDDEN=(librewolf zen .zen mozilla VSCodium keepassxc dconf pulse pipewire)
+
+RSYNC_EXCLUDES=(
+  --exclude '.git/'
+  --exclude '*.bak'
+  --exclude '*.bak.*'
+  --exclude '*~'
+  --exclude '*.swp'
+  --exclude 'node_modules/'
+  --exclude 'cache/'
+  --exclude 'Cache/'
+  --exclude '*.log'
+)

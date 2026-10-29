@@ -5,6 +5,8 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=./manifest
+source "$REPO/scripts/manifest"
 DRY_RUN=0
 case "${1:-}" in
   -n|--dry-run) DRY_RUN=1 ;;
@@ -12,25 +14,7 @@ case "${1:-}" in
   *) echo "usage: $0 [--dry-run]" >&2; exit 2 ;;
 esac
 
-# link: deploy.sh symlinks these, so the repo copy must mirror the live dir exactly.
-LINK_APPS=(i3 polybar picom rofi dunst kitty fontconfig gtk-3.0 xsettingsd nvim lazygit zellij)
-# copy: these tools rewrite their own config dir, so only our files are captured,
-# and the repo never becomes a symlink they could pollute.
-COPY_APPS=("btop:btop.conf" "opencode:opencode.jsonc" "kilo:kilo.jsonc")
-CONFIG_FILES=(mimeapps.list spectaclerc)
-HOME_FILES=(.zshrc .zshenv .gitconfig)
-
-RSYNC_EXCLUDES=(
-  --exclude '.git/'
-  --exclude '*.bak'
-  --exclude '*.bak.*'
-  --exclude '*~'
-  --exclude '*.swp'
-  --exclude 'node_modules/'
-  --exclude 'cache/'
-  --exclude 'Cache/'
-  --exclude '*.log'
-)
+# What is tracked, and how, comes from scripts/manifest (shared with deploy.sh).
 
 SECRET_RE='cookies|sessionstore|places\.sqlite|logins\.json|key[0-9]*\.db|pkcs11\.txt|credentials|\.pem$|\.key$|\.env$|token'
 
@@ -51,12 +35,30 @@ do_cp() {
   fi
 }
 
-abort_on_secrets() {
-  local src="$1" hits
-  hits="$(find "$src" -type f \( -regextype posix-extended -regex ".*($SECRET_RE)" \) 2>/dev/null || true)"
-  if [ -n "$hits" ]; then
+guard() {
+  # name is relative to ~/.config (or ~). Two independent brakes: an absolute
+  # denylist for app data, and a filename scan for anything secret-shaped.
+  local src="$1" name="$2" bad hit
+  for bad in "${FORBIDDEN[@]}"; do
+    case "$name" in
+      "$bad" | "$bad"/*)
+        die "refusing to capture $name: it is in scripts/manifest's FORBIDDEN list (app/browser data)"
+        ;;
+    esac
+  done
+  if [ -d "$src" ]; then
+    hit="$(find "$src" -type f \( -regextype posix-extended -regex ".*($SECRET_RE)" \) 2>/dev/null || true)"
+  elif [ -e "$src" ]; then
+    hit=""
+    if printf '%s\n' "$(basename "$src")" | grep -Eiq "$SECRET_RE"; then
+      hit="$(basename "$src")"
+    fi
+  else
+    hit=""
+  fi
+  if [ -n "$hit" ]; then
     die "refusing to capture $src, it contains files that look secret-shaped:
-$hits"
+$hit"
   fi
 }
 
@@ -92,7 +94,7 @@ for app in "${LINK_APPS[@]}"; do
     ok "$app: repo copy is already live, nothing to capture"
     continue
   fi
-  abort_on_secrets "$src"
+  guard "$src" "$app"
   if [ "$DRY_RUN" -eq 0 ]; then
     mkdir -p "$dst"
   fi
@@ -109,22 +111,24 @@ for entry in "${COPY_APPS[@]}"; do
     continue
   fi
   require_under_home "$src"
+  guard "$src" "$app/$file"
   do_cp "$src" "$REPO/.config/$app/$file"
   ok "captured ~/.config/$app/$file (copy-mode: other files in that dir stay local)"
 done
 
-for file in "${CONFIG_FILES[@]}"; do
+for file in "${COPY_FILES[@]}"; do
   src="$HOME/.config/$file"
   if [ ! -f "$src" ]; then
     note "skipping ~/.config/$file: not present"
     continue
   fi
   require_under_home "$src"
+  guard "$src" "$file"
   do_cp "$src" "$REPO/.config/$file"
   ok "captured ~/.config/$file"
 done
 
-for file in "${HOME_FILES[@]}"; do
+for file in "${LINK_HOME[@]}"; do
   src="$HOME/$file"
   if [ ! -f "$src" ]; then
     note "skipping ~/$file: not present"
