@@ -178,3 +178,16 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 path=("$HOME/.qoder/entry" ${path:#"$HOME/.qoder/entry"})
 export PATH
 # END QODER_DISPATCHER_PATH v1
+
+# Dotfiles
+alias dotcd='cd ~/dotfiles'
+alias dotstatus='git -C ~/dotfiles status'
+# Capture live config -> repo, snapshot installed packages, commit, push.
+# These lived in ~/.config/fish/aliases.fish, which was dropped with fish.
+dotpush() {
+  ~/dotfiles/scripts/sync.sh &&
+    ~/dotfiles/scripts/backup.sh &&
+    git -C ~/dotfiles add -A &&
+    git -C ~/dotfiles commit -m "chore: $(date '+%Y-%m-%d %H:%M:%S')" &&
+    git -C ~/dotfiles push
+}

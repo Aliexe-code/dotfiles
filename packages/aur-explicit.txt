@@ -1,7 +1,0 @@
-audiorelay
-discord-ptb
-kwin-scripts-krohnkite-git
-neofetch
-spotify-adblock
-tlauncher-installer
-zigup
