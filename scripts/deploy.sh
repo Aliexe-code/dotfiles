@@ -28,7 +28,9 @@ do_it() {
 stash() {
   # Keep whatever was there before; never silently discard a user's file.
   local target="$1"
-  mkdir -p "$BACKUP_DIR"
+  if [ "$DRY_RUN" -eq 0 ]; then
+    mkdir -p "$BACKUP_DIR"
+  fi
   echo "    ${YELLOW}📦${NC} Backing up existing $target -> $BACKUP_DIR/"
   do_it mv "$target" "$BACKUP_DIR/"
 }
