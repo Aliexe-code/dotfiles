@@ -1,7 +1,7 @@
 # CONTEXT.md — Neovim Zig IDE
 
 Date: 2026-09-17
-Host: CachyOS, NVIM 0.12.5 (vim.pack), Zig 0.16.0, ZLS (probe Mason/pacman/source)
+Host: Fedora 44 (i3 spin), NVIM 0.12.5 (vim.pack), Zig 0.16.0 (official tarball at `~/tools/zig`), ZLS (probe Mason/source)
 
 ## Glossary
 
@@ -17,7 +17,7 @@ Host: CachyOS, NVIM 0.12.5 (vim.pack), Zig 0.16.0, ZLS (probe Mason/pacman/sourc
 
 - ADR-001: Reclaim `<leader>z` for Zig (`<leader>Z` for Zoom)
 - ADR-002: Auto-detect `build.zig` vs file-mode for run/build/test
-- ADR-003: ZLS via Mason-first, fallback to pacman/source with mismatch warning
+- ADR-003: ZLS via Mason-first, fallback to source build with mismatch warning
 - ADR-004: `conform` file-mode `zig fmt` + LSP fallback, diagnostics via ZLS only
 
 ## Keymaps — `<leader>z` group
@@ -27,5 +27,5 @@ Host: CachyOS, NVIM 0.12.5 (vim.pack), Zig 0.16.0, ZLS (probe Mason/pacman/sourc
 ## Verification
 
 - `zig version` 0.16.0, `zls --version` should match minor (if 0.15.1, `checkhealth` will warn, build from source: `git clone https://github.com/zigtools/zls && zig build -Doptimize=ReleaseFast`)
-- `:Mason` should list `zls` if registry has it; else `pacman -S zls` (CachyOS) then `:checkhealth lsp`
+- `:Mason` should list `zls` if registry has it; else build from source (`git clone https://github.com/zigtools/zls && zig build -Doptimize=ReleaseFast`) — Fedora packages `zig` but has no `zls` RPM — then `:checkhealth lsp`
 - `:Telescope keymaps` shows `<leader>z` Zig group, `<leader>Z` Zoom group

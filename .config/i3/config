@@ -1,5 +1,5 @@
 # =====================================================================
-# i3 configuration — CachyOS professional setup (keyboard-driven)
+# i3 configuration — Fedora i3 spin (keyboard-driven)
 # Mod key is the "Super"/Windows key (Mod4)
 # Reload:   $mod+Shift+c       Restart: $mod+Shift+r       Logout: $mod+Shift+e
 # =====================================================================
@@ -179,7 +179,6 @@ for_window [class="firefox"]   border none
 for_window [class="mpv"]       floating enable
 for_window [class="imv"]       floating enable
 for_window [class="zenity"]    floating enable
-for_window [class="cachyos-welcome"] floating enable
 for_window [class="Gnome-Calculator"] floating enable
 for_window [title="Calculator"] floating enable
 for_window [title="Timer"]      floating enable
@@ -221,7 +220,7 @@ client.background       $bg
 # ---------------------------------------------------------------------
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 
-# open a terminal on first workspace at startup (ghostty is $term)
+# open a terminal on first workspace at startup ($term is xfce4-terminal)
 exec --no-startup-id "i3-msg 'workspace number 1; exec $term'"
 
 # README: reload / restart i3

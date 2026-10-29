@@ -1,5 +1,5 @@
 -- C# / .NET development: Roslyn LSP + formatting + DAP + dotnet CLI keymaps
--- Requires: .NET SDK on PATH (you have 10.0.x at /usr/sbin/dotnet),
+-- Requires: .NET SDK on PATH (Fedora installs it at /usr/lib/dotnet/dotnet),
 --   Mason packages: roslyn-language-server, csharpier, netcoredbg
 --   (auto-installed via init.lua ensure_installed on next :MasonToolInstallerInstall)
 
@@ -11,7 +11,7 @@ do
     if not p:find(dir, 1, true) then vim.env.PATH = dir .. ':' .. p end
   end
   prepend_path(vim.fn.stdpath('data') .. '/mason/bin')
-  prepend_path('/usr/sbin') -- dotnet lives here on this machine (CachyOS)
+  prepend_path('/usr/lib/dotnet') -- Fedora .NET SDK
   prepend_path('/usr/share/dotnet')
   prepend_path(vim.fn.expand('~/.dotnet/tools')) -- dotnet global tools (csharpier fallback)
 end

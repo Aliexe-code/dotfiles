@@ -12,9 +12,9 @@ spectaclerc.bak*
 # History & cache
 *history*
 *.log
-fish_variables
 Cache/
 cachedData/
+node_modules/
 
 # Credentials & secrets
 *.pem
@@ -30,3 +30,18 @@ save.txt
 # OS artifacts
 .DS_Store
 Thumbs.db
+
+# Browser data is deliberately never tracked. LibreWolf (~276M at
+# ~/.config/librewolf) and Zen (~526M at ~/.var/app/app.zen_browser.zen) are
+# full profiles: cookies, history, sessionstore and password databases.
+# These entries are a safety net in case a future sync list reaches them.
+librewolf/
+.mozilla/
+*.sqlite
+*.sqlite*
+*cookies*
+*sessionstore*
+*logins*.json
+pkcs11.txt
+cert9.db
+key4.db
