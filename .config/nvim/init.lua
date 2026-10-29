@@ -205,7 +205,7 @@ do
   --  See `:help hlsearch`
   vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
-  vim.keymap.set({ 'n', 'i' }, '<C-s>', '<cmd>write<CR>', { desc = 'Save and format' })
+  vim.keymap.set({ 'n', 'i' }, '<leader>s', '<cmd>write<CR>', { desc = 'Save and format' })
 
   -- Diagnostic Config & Keymaps
   --  See `:help vim.diagnostic.Opts`

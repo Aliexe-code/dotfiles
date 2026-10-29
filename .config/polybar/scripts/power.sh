@@ -3,7 +3,7 @@
 # Power menu — rofi driven (reboot / sleep / shutdown / lock / logout)
 # Uses systemd (systemctl) for system actions.
 
-lock()    { i3lock --color 2e3440 --blur 5; }
+lock()    { i3lock -c 2e3440; }
 logout()  { i3-msg exit; }
 sleep()   { systemctl suspend; }
 reboot()  { systemctl reboot; }

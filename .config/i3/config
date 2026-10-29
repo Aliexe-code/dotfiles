@@ -5,7 +5,7 @@
 # =====================================================================
 
 set $mod Mod4
-font pango:MesloLGM Nerd Font 10
+font pango:JetBrainsMono Nerd Font 10
 
 # ---------------------------------------------------------------------
 # Gaps and borders (gaps are built into i3 core since 4.22)
@@ -19,12 +19,12 @@ smart_borders on
 # ---------------------------------------------------------------------
 # Variables
 # ---------------------------------------------------------------------
-set $term        ghostty
+set $term        xfce4-terminal
 set $browser     librewolf
-set $editor      vscodium
+set $editor      codium
 set $menu        rofi -show drun
 set $fileman     nemo
-set $lock        "i3lock --color 2e3440 --blur 5"
+set $lock        "xsecurelock"
 
 # ---------------------------------------------------------------------
 # App launcher
@@ -36,18 +36,15 @@ bindsym $mod+d exec $menu
 # ---------------------------------------------------------------------
 bindsym $mod+Return  exec $term
 bindsym $mod+b        exec $browser
-bindsym $mod+Shift+b  exec torbrowser
 bindsym $mod+e        exec $editor
 bindsym $mod+Shift+n  exec $fileman
 bindsym $mod+Shift+s  exec "rofi -show ssh"
-bindsym $mod+grave    exec "ghostty -e btop"
-bindsym $mod+Ctrl+Return exec "ghostty -e btop"
+bindsym $mod+grave    exec "kitty -e btop"
+bindsym $mod+Ctrl+Return exec "kitty -e btop"
 
 # ---------------------------------------------------------------------
 # Extra app shortcuts (memorize)
 # ---------------------------------------------------------------------
-bindsym $mod+m        exec spotify
-bindsym $mod+Shift+a  exec audiorelay
 
 # ---------------------------------------------------------------------
 # Screenshots — Spectacle (Print = select region, GUI kept)
@@ -162,15 +159,13 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 # Background, compositor, notifications (fixed monitor + 144Hz)
 # ---------------------------------------------------------------------
 exec --no-startup-id "xset s off -dpms && xset s noblank"
-exec_always --no-startup-id "xrandr --output DP-0 --mode 1920x1080 --rate 143.85"
+exec_always --no-startup-id "xrandr --auto"
 exec_always --no-startup-id "feh --bg-fill ~/.config/i3/wallpaper.png"
-exec_always --no-startup-id "picom --experimental-backends"
+exec_always --no-startup-id "picom --config ~/.config/picom/picom.conf"
 exec_always --no-startup-id "dunst"
-exec_always --no-startup-id "dex -a -s /etc/xdg/autostart/:~/.config/autostart/"
-exec_always --no-startup-id "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+exec_always --no-startup-id "/usr/libexec/lxpolkit"
 
 # volume OSD pipe
-exec_always --no-startup-id "mkfifo /tmp/xobpipe 2>/dev/null; tail -f /tmp/xobpipe | xob -t 2170 & disown"
 
 # keyboard layout - us first so i3 shortcuts work by default, Alt+Shift toggles
 exec_always --no-startup-id "setxkbmap -layout us,eg -variant ,basic -option 'grp:alt_shift_toggle'"
@@ -192,9 +187,9 @@ for_window [title="Timer"]      floating enable
 # ---------------------------------------------------------------------
 # Media / audio keys
 # ---------------------------------------------------------------------
-bindsym XF86AudioRaiseVolume exec "pamixer -ui 3 && pamixer --get-volume > /tmp/xobpipe"
-bindsym XF86AudioLowerVolume exec "pamixer -ud 3 && pamixer --get-volume > /tmp/xobpipe"
-bindsym XF86AudioMute exec "pamixer -t && pamixer --get-volume > /tmp/xobpipe"
+bindsym XF86AudioRaiseVolume exec "pamixer -ui 3"
+bindsym XF86AudioLowerVolume exec "pamixer -ud 3"
+bindsym XF86AudioMute exec "pamixer -t"
 bindsym XF86AudioPlay    exec "playerctl play-pause"
 bindsym XF86AudioNext    exec "playerctl next"
 bindsym XF86AudioPrev    exec "playerctl previous"
@@ -228,3 +223,11 @@ exec_always --no-startup-id ~/.config/polybar/launch.sh
 
 # open a terminal on first workspace at startup (ghostty is $term)
 exec --no-startup-id "i3-msg 'workspace number 1; exec $term'"
+
+# README: reload / restart i3
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+b exec torbrowser-launcher
+# Mod+Shift+a (AudioRelay) has no Linux build - left unbound
+
+exec --no-startup-id xsettingsd

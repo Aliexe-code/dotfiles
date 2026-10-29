@@ -25,3 +25,4 @@ x-scheme-handler/discord-424004941485572097=discord-424004941485572097.desktop
 x-scheme-handler/http=librewolf.desktop
 x-scheme-handler/https=librewolf.desktop
 x-scheme-handler/unknown=librewolf.desktop
+application/xhtml+xml=librewolf.desktop
