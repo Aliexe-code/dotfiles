@@ -63,6 +63,7 @@ alias gp='git push'
 alias gl='git log --oneline --graph --decorate'
 alias gd='git diff'
 alias lg='lazygit'
+alias srcz='source ~/.zshrc'
 
 # Quick project shortcuts
 alias dev='cd ~/dev 2>/dev/null || mkdir -p ~/dev && cd ~/dev'
