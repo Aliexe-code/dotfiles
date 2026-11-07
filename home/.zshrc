@@ -52,6 +52,8 @@ alias vver='v version'
 
 # General dev aliases
 alias ll='ls -la --color=auto'
+alias t='eza --tree --level=2 --icons'
+alias ta='eza --tree --level=3 --icons --all'
 alias la='ls -A'
 alias ..='cd ..'
 alias ...='cd ../..'

@@ -58,6 +58,7 @@ ripgrep
 fd-find
 jq
 tree
+eza
 xclip
 unzip
 btop
