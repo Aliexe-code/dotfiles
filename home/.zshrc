@@ -18,6 +18,14 @@ plugins=(
 
 source "$ZSH/oh-my-zsh.sh"
 
+# Syntax highlighting colors: valid commands green, unknown/red tokens red
+ZSH_HIGHLIGHT_STYLES[command]='fg=green,bold'
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=green'
+ZSH_HIGHLIGHT_STYLES[function]='fg=green'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=green'
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=red,bold'
+ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=yellow'
+
 # ---- Development shortcuts ----
 
 # Go
