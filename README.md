@@ -80,6 +80,7 @@ After provisioning a new machine: sign in again, or use each browser's own sync.
 | `Mod + Return` | Terminal (`$term` = ghostty) |
 | `Mod + d` | App launcher (`rofi -show drun`) |
 | `Mod + b` | Browser (`$browser` = zen) |
+| `Mod + m` | Email (`$mail` = betterbird) |
 | `Mod + Shift + b` | Tor Browser |
 | `Mod + e` | Editor (`codium`) |
 | `Mod + Shift + n` | File manager (`nemo`) |

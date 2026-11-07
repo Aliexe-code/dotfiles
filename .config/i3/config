@@ -21,6 +21,7 @@ smart_borders on
 # ---------------------------------------------------------------------
 set $term        ghostty
 set $browser     flatpak run app.zen_browser.zen
+set $mail        flatpak run eu.betterbird.Betterbird
 set $editor      codium
 set $menu        rofi -show drun
 set $fileman     nemo
@@ -36,6 +37,7 @@ bindsym $mod+d exec $menu
 # ---------------------------------------------------------------------
 bindsym $mod+Return  exec $term
 bindsym $mod+b        exec $browser
+bindsym $mod+m        exec $mail
 bindsym $mod+e        exec $editor
 bindsym $mod+Shift+n  exec $fileman
 bindsym $mod+Shift+s  exec "rofi -show ssh"
