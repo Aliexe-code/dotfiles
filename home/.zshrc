@@ -18,6 +18,10 @@ plugins=(
 
 source "$ZSH/oh-my-zsh.sh"
 
+# Case-insensitive completion: `cd desktop<Tab>` matches `Desktop`
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*'
+zstyle ':completion:*' menu select
+
 # Syntax highlighting colors: valid commands green, unknown/red tokens red
 ZSH_HIGHLIGHT_STYLES[command]='fg=green'
 ZSH_HIGHLIGHT_STYLES[builtin]='fg=green'
