@@ -19,6 +19,7 @@ plugins=(
 source "$ZSH/oh-my-zsh.sh"
 
 # Case-insensitive completion: `cd desktop<Tab>` matches `Desktop`
+autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*'
 zstyle ':completion:*' menu select
 
