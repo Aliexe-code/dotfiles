@@ -134,6 +134,10 @@ for file in "${LINK_HOME[@]}"; do
     note "skipping ~/$file: not present"
     continue
   fi
+  if already_linked "$src" "$REPO/home/$file"; then
+    ok "$file: repo copy is already live, nothing to capture"
+    continue
+  fi
   do_cp "$src" "$REPO/home/$file"
   ok "captured ~/$file"
 done

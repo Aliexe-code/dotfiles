@@ -5,7 +5,7 @@
 
 # Symlinked whole: the repo directory IS the live config, so edits are tracked
 # automatically and there is no copy to keep in sync.
-LINK_APPS=(i3 polybar picom rofi dunst kitty fontconfig gtk-3.0 xsettingsd nvim lazygit zellij)
+LINK_APPS=(i3 polybar picom rofi dunst ghostty fontconfig gtk-3.0 xsettingsd lazygit zellij nvim)
 
 # Copied, single named file: these tools rewrite their own config directory
 # (btop rewrites btop.conf on exit; opencode/kilo drop node_modules, service.json

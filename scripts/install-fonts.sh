@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install the JetBrainsMono Nerd Font variant polybar, rofi, kitty and
+# Install the JetBrainsMono Nerd Font variant polybar, rofi, ghostty and
 # xsettingsd all name explicitly.
 #
 # Fedora's jetbrains-mono-fonts package has NO Nerd glyphs, so without this the
@@ -67,7 +67,7 @@ fc-cache -f "$DEST" >/dev/null
 matched="$(probe)"
 if [ -z "$matched" ] || [ "$matched" = "$(fallback)" ]; then
   echo "ERROR: fontconfig still resolves 'JetBrainsMono Nerd Font' to '$matched'." >&2
-  echo "       Polybar/rofi/kitty would show tofu. Investigate before deploying." >&2
+  echo "       Polybar/rofi/ghostty would show tofu. Investigate before deploying." >&2
   exit 1
 fi
 

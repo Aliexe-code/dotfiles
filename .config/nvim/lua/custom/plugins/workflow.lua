@@ -229,6 +229,7 @@ vim.keymap.set('n', '<leader>wd', '<Cmd>close<CR>', { desc = 'Window: close' })
 vim.keymap.set('n', '<leader>wo', '<Cmd>only<CR>', { desc = 'Window: only' })
 
 -- Save / quit helpers
+vim.keymap.set('n', '<leader>s', '<Cmd>w<CR>', { desc = 'Save file' })
 vim.keymap.set('n', '<leader>ww', '<Cmd>w<CR>', { desc = 'Write file' })
 vim.keymap.set('n', '<leader>qq', '<Cmd>qa<CR>', { desc = 'Quit all' })
 

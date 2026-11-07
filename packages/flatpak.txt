@@ -5,4 +5,5 @@
 # snapshot; scripts/backup.sh reports installed apps but never writes here.
 
 app.zen_browser.zen
+eu.betterbird.Betterbird
 net.audiorelay.AudioRelay

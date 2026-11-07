@@ -19,8 +19,8 @@ smart_borders on
 # ---------------------------------------------------------------------
 # Variables
 # ---------------------------------------------------------------------
-set $term        xfce4-terminal
-set $browser     librewolf
+set $term        ghostty
+set $browser     flatpak run app.zen_browser.zen
 set $editor      codium
 set $menu        rofi -show drun
 set $fileman     nemo
@@ -39,8 +39,8 @@ bindsym $mod+b        exec $browser
 bindsym $mod+e        exec $editor
 bindsym $mod+Shift+n  exec $fileman
 bindsym $mod+Shift+s  exec "rofi -show ssh"
-bindsym $mod+grave    exec "kitty -e btop"
-bindsym $mod+Ctrl+Return exec "kitty -e btop"
+bindsym $mod+grave    exec "ghostty -e btop"
+bindsym $mod+Ctrl+Return exec "ghostty -e btop"
 
 # ---------------------------------------------------------------------
 # Extra app shortcuts (memorize)
@@ -230,3 +230,4 @@ bindsym $mod+Shift+b exec torbrowser-launcher
 # Mod+Shift+a (AudioRelay) has no Linux build - left unbound
 
 exec --no-startup-id xsettingsd
+exec --no-startup-id /usr/libexec/xdg-desktop-portal

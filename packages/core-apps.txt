@@ -39,9 +39,9 @@ playerctl
 pamixer
 brightnessctl
 
-# Terminal & shell — xfce4-terminal is $term in i3; kitty hosts btop
+# Terminal & shell — ghostty is $term in i3 and hosts btop (xfce4-terminal kept as fallback)
 xfce4-terminal
-kitty
+ghostty
 zsh
 
 # Wallpaper
@@ -52,7 +52,6 @@ xsecurelock
 codium
 
 # Editors, VCS & CLI tools
-neovim
 git
 gh
 ripgrep
@@ -94,6 +93,6 @@ fontconfig
 #                           ZSH_PLUGINS, so we match what this machine runs)
 #   Zen browser          -> flatpak, see packages/flatpak.txt
 #   JetBrainsMono Nerd Font -> scripts/install-fonts.sh (no Nerd glyphs in
-#                           Fedora's jetbrains-mono-fonts; polybar/rofi/kitty
+#                           Fedora's jetbrains-mono-fonts; polybar/rofi/ghostty
 #                           all require it)
 # ---------------------------------------------------------------------

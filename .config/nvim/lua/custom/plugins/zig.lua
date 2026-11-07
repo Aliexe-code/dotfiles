@@ -1,9 +1,9 @@
 -- Zig language: run / build / test / fmt / ast-check / fetch via <leader>z*
--- Requires Zig 0.17.x at /usr/bin/zig and ZLS (mason/bin/zls or zls on PATH)
+-- Requires Zig 0.17.x managed by zvm (~/.zvm/bin/zig) and ZLS (mason/bin/zls or zls on PATH)
 -- NOTE: 0.17 renamed -O modes to lowercase (debug/safe/fast/small).
 -- Old names (Debug/ReleaseFast/...) still parse but are deprecated (removed after 0.18).
 
--- Ensure Mason and Zig bins are on PATH for LSP, conform, and :terminal
+-- Ensure Mason and Zig (zvm) bins are on PATH for LSP, conform, and :terminal
 do
   local function prepend_path(dir)
     if dir == '' or vim.fn.isdirectory(dir) == 0 then return end
@@ -11,8 +11,10 @@ do
     if not path:find(dir, 1, true) then vim.env.PATH = dir .. ':' .. path end
   end
   prepend_path(vim.fn.stdpath('data') .. '/mason/bin')
-  prepend_path('/usr/bin')
+  prepend_path(vim.fn.expand('~/.zvm/bin'))
+  prepend_path(vim.fn.expand('~/.zvm/self'))
   prepend_path('/usr/local/bin')
+  prepend_path('/usr/bin')
 end
 
 -- Filetype detection for .zig / .zon (Neovim 0.12 handles .zig, ensure .zon)
@@ -24,8 +26,10 @@ vim.filetype.add({
 })
 
 local function zig_exe()
-  if vim.fn.executable('/usr/bin/zig') == 1 then return '/usr/bin/zig' end
+  local zvm_zig = vim.fn.expand('~/.zvm/bin/zig')
+  if vim.fn.executable(zvm_zig) == 1 then return zvm_zig end
   if vim.fn.executable('/usr/local/bin/zig') == 1 then return '/usr/local/bin/zig' end
+  if vim.fn.executable('/usr/bin/zig') == 1 then return '/usr/bin/zig' end
   if vim.fn.executable('zig') == 1 then return vim.fn.exepath('zig') end
   return nil
 end
@@ -61,7 +65,7 @@ end
 local function with_zig(fn)
   local exe = zig_exe()
   if not exe then
-    vim.notify('Zig not found. Expected /usr/bin/zig or zig on PATH (0.17.x)', vim.log.levels.ERROR)
+    vim.notify('Zig not found. Expected ~/.zvm/bin/zig (zvm) or zig on PATH (0.17.x)', vim.log.levels.ERROR)
     return
   end
   fn(exe)

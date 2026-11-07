@@ -27,24 +27,12 @@ do
 end
 
 ------------------------------------------------------------
--- V keymaps — all under <leader>v and <leader>cv
+-- V helpers
 ------------------------------------------------------------
-vim.schedule(function()
-  local ok, wk = pcall(require, 'which-key')
-  if ok then
-    wk.add {
-      { '<leader>v', group = '[V]lang', mode = { 'n', 'v' } },
-      { '<leader>cv', group = '[C]ode [V]lang', mode = { 'n', 'v' } },
-    }
-  end
-end)
-
 local function project_root(bufnr)
   bufnr = bufnr or 0
   local name = vim.api.nvim_buf_get_name(bufnr)
   if name == '' then return vim.fn.getcwd() end
-  local root = vim.fs.root and vim.fs.root(bufnr, { 'v.mod', '.git' })
-  if root then return root end
   local found = vim.fs.find({ 'v.mod', '.git' }, { path = name, upward = true })[1]
   if found then return vim.fs.dirname(found) end
   return vim.fn.fnamemodify(name, ':h')
@@ -57,21 +45,80 @@ local function run_in_term(cmd, cwd)
     Terminal:new({ cmd = cmd, dir = cwd, direction = 'float', close_on_exit = false, hidden = true }):toggle()
     return
   end
-  vim.cmd 'botright split | enew'
+  vim.cmd('botright split | enew')
   vim.fn.termopen(cmd, { cwd = cwd })
-  vim.cmd 'startinsert'
+  vim.cmd('startinsert')
 end
 
-local function v_cmd(args, cwd) run_in_term('v ' .. args, cwd or project_root()) end
+local function shellescape(s) return vim.fn.shellescape(s) end
 
+local function v_run()
+  local file = vim.api.nvim_buf_get_name(0)
+  if file == '' then vim.notify('Save a .v file first', vim.log.levels.WARN) return end
+  run_in_term('v run ' .. shellescape(file), vim.fn.fnamemodify(file, ':h'))
+end
+
+local function v_build()
+  local file = vim.api.nvim_buf_get_name(0)
+  if file == '' then vim.notify('Save a .v file first', vim.log.levels.WARN) return end
+  local out = vim.fn.fnamemodify(file, ':r')
+  run_in_term('v -o ' .. shellescape(out) .. ' ' .. shellescape(file), vim.fn.fnamemodify(file, ':h'))
+end
+
+local function v_test()
+  run_in_term('v test .', project_root())
+end
+
+local function v_fmt()
+  local ok = pcall(function() require('conform').format({ async = true, lsp_format = 'fallback' }) end)
+  if ok then return end
+  local file = vim.api.nvim_buf_get_name(0)
+  if file == '' then vim.notify('No file', vim.log.levels.WARN) return end
+  vim.system({ 'v', 'fmt', '-w', file }, { text = true }, function(obj)
+    vim.schedule(function()
+      if obj.code == 0 then vim.cmd('checktime'); vim.notify('v fmt done', vim.log.levels.INFO)
+      else vim.notify(obj.stderr ~= '' and obj.stderr or 'v fmt failed', vim.log.levels.ERROR) end
+    end)
+  end)
+end
+
+local function v_check()
+  local file = vim.api.nvim_buf_get_name(0)
+  if file == '' then vim.notify('Save a .v file first', vim.log.levels.WARN) return end
+  run_in_term('v -check ' .. shellescape(file), vim.fn.fnamemodify(file, ':h'))
+end
+
+------------------------------------------------------------
+-- V keymaps under <leader>v
+------------------------------------------------------------
 local map = function(lhs, rhs, desc) vim.keymap.set('n', lhs, rhs, { desc = desc, silent = true }) end
 
-map('<leader>vr', function() v_cmd('run .') end, '[V] Run (v run .)')
-map('<leader>vb', function() v_cmd('build .') end, '[V] Build (v build .)')
-map('<leader>vt', function() v_cmd('test .') end, '[V] Test (v test .)')
-map('<leader>vf', function() v_cmd('fmt -w .') end, '[V] Format (v fmt -w .)')
-map('<leader>vv', function() v_cmd('vet .') end, '[V] Vet (v vet .)')
-map('<leader>vc', function() v_cmd('check .') end, '[V] Check (v check .)')
-map('<leader>vC', function() v_cmd('clean') end, '[V] Clean')
-map('<leader>vdoc', function() v_cmd('doc .') end, '[V] Doc')
-map('<leader>vi', function() vim.lsp.buf.code_action { context = { only = { 'source.organizeImports' } }, apply = true } end, '[V] Organize imports')
+map('<leader>vr', v_run, '[V] Run')
+map('<leader>vb', v_build, '[V] Build')
+map('<leader>vt', v_test, '[V] Test')
+map('<leader>vf', v_fmt, '[V] Format')
+map('<leader>vc', v_check, '[V] Check')
+map('<leader>vh', function() vim.lsp.buf.hover() end, '[V] Hover')
+map('<leader>va', function() vim.lsp.buf.code_action() end, '[V] Code action')
+map('<leader>vn', function() vim.lsp.buf.rename() end, '[V] Rename')
+map('<leader>vg', function() vim.lsp.buf.definition() end, '[V] Goto definition')
+map('<leader>vd', function() vim.diagnostic.setloclist() end, '[V] Diagnostics')
+
+vim.schedule(function()
+  local ok, wk = pcall(require, 'which-key')
+  if ok then
+    wk.add({
+      { '<leader>v', group = '[V]lang' },
+      { '<leader>vr', desc = 'Run' },
+      { '<leader>vb', desc = 'Build' },
+      { '<leader>vt', desc = 'Test' },
+      { '<leader>vf', desc = 'Format' },
+      { '<leader>vc', desc = 'Check' },
+      { '<leader>vh', desc = 'Hover' },
+      { '<leader>va', desc = 'Code action' },
+      { '<leader>vn', desc = 'Rename' },
+      { '<leader>vg', desc = 'Goto definition' },
+      { '<leader>vd', desc = 'Diagnostics' },
+    })
+  end
+end)

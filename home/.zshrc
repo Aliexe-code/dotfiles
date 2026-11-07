@@ -111,8 +111,8 @@ autoload -Uz compinit && compinit
 unset bash_color_prompt_disable 2>/dev/null
 
 # Default editor
-export EDITOR=nvim
-export VISUAL=nvim
+export EDITOR=vim
+export VISUAL=vim
 
 # Colors
 export CLICOLOR=1

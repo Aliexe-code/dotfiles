@@ -145,7 +145,7 @@ step_flatpak() {
 }
 
 step_fonts() {
-  step "JetBrainsMono Nerd Font (required by polybar, rofi, kitty, xsettingsd)"
+  step "JetBrainsMono Nerd Font (required by polybar, rofi, ghostty, xsettingsd)"
   run "$DOTFILES_DIR/scripts/install-fonts.sh"
 }
 

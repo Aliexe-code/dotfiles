@@ -108,6 +108,7 @@ do
   vim.g.loaded_python3_provider = 0
   vim.g.loaded_ruby_provider = 0
   vim.g.loaded_perl_provider = 0
+  vim.g.loaded_node_provider = 0
 
   -- Define filetypes early to silence vim.lsp unknown-filetype warnings (gopls/v_analyzer use these)
   pcall(function()
@@ -176,7 +177,8 @@ do
   --   See `:help lua-options`
   --   and `:help lua-guide-options`
   vim.o.list = true
-  vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+  -- Hide tab glyphs (previously '» ') so tabs don't render as '>>'-like icons
+  vim.opt.listchars = { tab = '  ', trail = '·', nbsp = '␣' }
 
   -- Preview substitutions live, as you type!
   vim.o.inccommand = 'split'
@@ -205,7 +207,7 @@ do
   --  See `:help hlsearch`
   vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
-  vim.keymap.set({ 'n', 'i' }, '<leader>s', '<cmd>write<CR>', { desc = 'Save and format' })
+  vim.keymap.set({ 'n', 'i' }, '<C-s>', '<cmd>write<CR>', { desc = 'Save and format' })
 
   -- Diagnostic Config & Keymaps
   --  See `:help vim.diagnostic.Opts`
@@ -747,6 +749,10 @@ do
       -- This is where a variable was first declared, or where a function is defined, etc.
       -- To jump back, press <C-t>.
       vim.keymap.set('n', 'grd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
+      -- Common aliases (gd, gr) so muscle memory works across editors
+      vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = buf, desc = 'Goto Definition' })
+      vim.keymap.set('n', 'gr', builtin.lsp_references, { buffer = buf, desc = 'Goto References' })
+      vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = buf, desc = 'Hover Documentation' })
 
       -- Fuzzy find all the symbols in your current document.
       -- Symbols are things like variables, functions, types, etc.
@@ -904,52 +910,37 @@ do
     --
     -- See: https://github.com/neovim/nvim-lspconfig
 
-    -- Go: gopls with best-practice settings (gofumpt, staticcheck, hints, analyses)
-    -- See: https://github.com/golang/tools/blob/master/gopls/doc/settings.md
-    gopls = {
-      settings = {
-        gopls = {
-          gofumpt = true,
-          codelenses = {
-            gc_details = true,
-            generate = true,
-            regenerate_cgo = true,
-            run_govulncheck = true,
-            test = true,
-            tidy = true,
-            upgrade_dependency = true,
-            vendor = true,
-          },
-          hints = {
-            assignVariableTypes = true,
-            compositeLiteralFields = true,
-            compositeLiteralTypes = true,
-            constantValues = true,
-            functionTypeParameters = true,
-            parameterNames = true,
-            rangeVariableTypes = true,
-          },
-          analyses = {
-            nilness = true,
-            unusedparams = true,
-            unusedvariable = true,
-            unusedwrite = true,
-            useany = true,
-            shadow = true,
-            ST1000 = true,
-            ST1003 = true,
-            fieldalignment = true,
-          },
-          usePlaceholders = true,
-          completeUnimported = true,
-          staticcheck = true,
-          directoryFilters = { '-.git', '-.vscode', '-.idea', '-node_modules', '-.vscode-test' },
-          semanticTokens = true,
-        },
-      },
-    },
-
      stylua = {}, -- Used to format Lua code
+
+     -- Go: gopls (definition, hover, completion, diagnostics). Formatting via gopls/gofmt.
+     gopls = {
+       settings = {
+         gopls = {
+           usePlaceholders = true,
+           completeUnimported = true,
+           deepCompletion = true,
+           staticcheck = true,
+           gofumpt = true,
+           analyses = {
+             unusedparams = true,
+             unusedvariable = true,
+             unusedwrite = true,
+             nilness = true,
+             shadow = true,
+             useany = true,
+           },
+           hints = {
+             assignVariableTypes = true,
+             compositeLiteralFields = true,
+             compositeLiteralTypes = true,
+             constantValues = true,
+             functionTypeParameters = true,
+             parameterNames = true,
+             rangeVariableTypes = true,
+           },
+         },
+       },
+     },
 
      -- V language support (v-analyzer via Mason or ~/.config/v-analyzer)
      v_analyzer = (function()
@@ -976,12 +967,6 @@ do
         }
        end)(),
 
-        ols = {
-        cmd = { vim.fn.stdpath('data') .. '/mason/bin/ols' },
-        filetypes = { 'odin' },
-        root_markers = { 'ols.json', '.git', '.odin' },
-      },
-
       -- Zig: zls via Mason or system (build from source if version mismatch; see lua/custom/plugins/zig.lua)
       zls = (function()
         local candidates = {
@@ -1001,18 +986,6 @@ do
           root_markers = { 'build.zig', 'build.zig.zon', '.git' },
         }
       end)(),
-
-      -- Datafiles: broad support for md/txt/sql/toml/json/yaml/csv/xml...
-      -- All filetypes get Treesitter above; these give LSP smarts where useful
-      jsonls = {}, -- json
-      yamlls = {}, -- yaml
-      taplo = {}, -- toml
-      marksman = {}, -- markdown
-      sqlls = { -- sql
-        filetypes = { 'sql', 'mysql', 'psql' },
-        root_markers = { '.sqllsrc', '.git' },
-      },
-      lemminx = {}, -- xml
 
       -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
@@ -1071,23 +1044,17 @@ do
   -- You can press `g?` for help in this menu.
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
-    -- Go toolchain — LSP + formatters + linters + DAP
+    -- Zig / V tooling (LSPs already in `servers` above: zls, v_analyzer)
+    'codelldb', -- DAP backend used by nvim-dap for Zig (and others)
+    -- Go LSP + tooling
     'gopls',
+    'delve',
     'golangci-lint',
-    'gofumpt',
     'goimports',
+    'gofumpt',
     'golines',
     'gomodifytags',
     'impl',
-    'delve',
-    'staticcheck',
-    -- Datafiles — formatters (LSPs already via servers: jsonls, yamlls, taplo, marksman, sqlls, lemminx)
-    'prettier',
-    'sqlfluff',
-    -- C# — Roslyn LSP + csharpier formatter + netcoredbg (wired in lua/custom/plugins/csharp.lua)
-    'roslyn-language-server',
-    'csharpier',
-    'netcoredbg',
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -1143,25 +1110,14 @@ do
     -- You can also specify external formatters in here.
     formatters_by_ft = {
       lua = { 'stylua' },
-      cs = { 'csharpier', lsp_format = 'fallback' }, -- dotnet format via Roslyn if csharpier missing
-      go = { 'goimports', 'gofumpt' },
-      -- Alternative: use golines after gofumpt for line wrapping (uncomment if desired)
-      -- go = { 'goimports', 'gofumpt', 'golines' },
-      gomod = { 'gofumpt' },
-      gowork = { 'gofumpt' },
       -- Prefer v-analyzer LSP formatting; fall back to `v fmt` if available
       v = { 'v', lsp_format = 'prefer' },
-      odin = { 'odinfmt' },
       zig = { 'zigfmt', lsp_format = 'fallback' },
-      json = { 'prettier', lsp_format = 'fallback' },
-      jsonc = { 'prettier', lsp_format = 'fallback' },
-      yaml = { 'prettier', lsp_format = 'fallback' },
-      toml = { lsp_format = 'fallback' }, -- taplo LSP
-      markdown = { 'prettier', lsp_format = 'fallback' },
-      sql = { 'sqlfluff', 'sql_formatter', lsp_format = 'fallback' },
-      xml = { lsp_format = 'fallback' }, -- lemminx
-      csv = { lsp_format = 'fallback' },
-      ini = { lsp_format = 'fallback' },
+      -- Go: organize imports then format (gofumpt is stricter gofmt)
+      go = { 'goimports', 'gofumpt', lsp_format = 'fallback' },
+      gomod = { 'gofumpt', lsp_format = 'fallback' },
+      gowork = { 'gofumpt', lsp_format = 'fallback' },
+      gotmpl = { lsp_format = 'fallback' },
       -- Conform can also run multiple formatters sequentially
       -- python = { "isort", "black" },
       --
@@ -1180,14 +1136,31 @@ do
         args = { 'fmt', '-w', '$FILENAME' },
         stdin = false,
       },
-      odinfmt = {
-        command = vim.fn.stdpath('data') .. '/mason/bin/odinfmt',
-        args = { '$FILENAME' },
-        stdin = false,
-      },
       zigfmt = {
         command = 'zig',
         args = { 'fmt', '$FILENAME' },
+        stdin = false,
+      },
+      goimports = {
+        command = function()
+          local mason = vim.fn.stdpath('data') .. '/mason/bin/goimports'
+          if vim.fn.executable(mason) == 1 then return mason end
+          local home = vim.fn.expand '~/go/bin/goimports'
+          if vim.fn.executable(home) == 1 then return home end
+          return 'goimports'
+        end,
+        args = { '-w', '$FILENAME' },
+        stdin = false,
+      },
+      gofumpt = {
+        command = function()
+          local mason = vim.fn.stdpath('data') .. '/mason/bin/gofumpt'
+          if vim.fn.executable(mason) == 1 then return mason end
+          local home = vim.fn.expand '~/go/bin/gofumpt'
+          if vim.fn.executable(home) == 1 then return home end
+          return 'gofumpt'
+        end,
+        args = { '-w', '$FILENAME' },
         stdin = false,
       },
     },

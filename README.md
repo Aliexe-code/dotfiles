@@ -1,6 +1,6 @@
 # 🪐 Ali's Fedora + i3 Dotfiles
 
-Reproducible configuration for **Fedora 44 (i3 spin)**: the **[i3](https://i3wm.org/)** tiling window manager on **X11**, **Polybar**, **Rofi**, **Dunst**, **Picom**, the **zsh** shell, and **xfce4-terminal** (with **kitty** kept for `btop`).
+Reproducible configuration for **Fedora 44 (i3 spin)**: the **[i3](https://i3wm.org/)** tiling window manager on **X11**, **Polybar**, **Rofi**, **Dunst**, **Picom**, the **zsh** shell, and **ghostty** (terminal and `btop` host).
 
 > Reinstalling? Jump to [Quick Start](#-quick-start-on-a-fresh-fedora-install).
 
@@ -20,11 +20,11 @@ This repo is the **only** place these configs exist. Most of `~/.config` is syml
 | **Compositor** | [Picom](https://github.com/yshui/picom) |
 | **Display Manager** | LightDM (`lightdm-gtk` greeter) |
 | **Shell** | zsh + oh-my-zsh (`robbyrussell`; autosuggestions, syntax-highlighting) |
-| **Terminal** | xfce4-terminal (`$term`), kitty for `btop` only |
+| **Terminal** | ghostty (`$term`), xfce4-terminal kept as fallback |
 | **Editor** | [Neovim](https://neovim.io/) (kickstart-based) & [VSCodium](https://vscodium.com/) (`codium`) |
 | **Terminal Workspace** | [zellij](https://zellij.dev/) |
 | **Coding Agents** | opencode, kilo |
-| **Browsers** | LibreWolf (`$browser`) + Zen (flatpak) |
+| **Browsers** | Zen (`$browser`) + LibreWolf |
 | **Screenshots** | [Spectacle](https://apps.kde.org/spectacle/) |
 | **Wallpaper / Lock** | `feh` / `xsecurelock` (`Mod+l`); the power menu locks with `i3lock` |
 | **File Manager** | Nemo (Thunar also present from the spin) |
@@ -55,7 +55,7 @@ Steps, each idempotent and individually runnable (`--only fonts`):
 
 > ⚠️ **The Nerd Font is not optional, and `dnf` cannot provide it.** Fedora's
 > `jetbrains-mono-fonts` package has no Nerd glyphs. Polybar (`config.ini`
-> `font-0`/`font-1`), Rofi, `kitty.conf` and `xsettingsd.conf` all name
+> `font-0`/`font-1`), Rofi, `ghostty` config and `xsettingsd.conf` all name
 > "JetBrainsMono Nerd Font", so without step 5 the bar renders tofu boxes.
 > `install-fonts.sh` downloads the ~130MB upstream zip, keeps the 8 faces
 > actually referenced, and **fails loudly** if fontconfig still falls back.
@@ -77,14 +77,14 @@ After provisioning a new machine: sign in again, or use each browser's own sync.
 ### Applications
 | Key | Action |
 | :--- | :--- |
-| `Mod + Return` | Terminal (`$term` = xfce4-terminal) |
+| `Mod + Return` | Terminal (`$term` = ghostty) |
 | `Mod + d` | App launcher (`rofi -show drun`) |
-| `Mod + b` | Browser (`$browser` = librewolf) |
+| `Mod + b` | Browser (`$browser` = zen) |
 | `Mod + Shift + b` | Tor Browser |
 | `Mod + e` | Editor (`codium`) |
 | `Mod + Shift + n` | File manager (`nemo`) |
 | `Mod + Shift + s` | SSH launcher (`rofi -show ssh`) |
-| `Mod + grave` / `Mod + Ctrl + Return` | `btop` in a kitty window |
+| `Mod + grave` / `Mod + Ctrl + Return` | `btop` in a ghostty window |
 | `Mod + Shift + p` | Calculator (`gnome-calculator`) |
 
 ### Screenshots (Spectacle)
@@ -151,7 +151,7 @@ After provisioning a new machine: sign in again, or use each browser's own sync.
 │   ├── rofi/           # Launcher config
 │   ├── dunst/          # Notification daemon
 │   ├── picom/          # Compositor
-│   ├── kitty/          # Kitty (btop host)
+│   ├── ghostty/        # Ghostty (terminal + btop host)
 │   ├── nvim/           # Neovim (kickstart-based) + language plugins
 │   ├── zellij/         # config.kdl
 │   ├── fontconfig/     # Font rendering
@@ -190,7 +190,7 @@ After provisioning a new machine: sign in again, or use each browser's own sync.
 
 Two modes, defined in [`scripts/manifest`](scripts/manifest):
 
-- **link** (`i3`, `polybar`, `picom`, `rofi`, `dunst`, `kitty`, `fontconfig`, `gtk-3.0`, `xsettingsd`, `nvim`, `lazygit`, `zellij`, plus `~/.zshrc`, `~/.zshenv`, `~/.gitconfig`) — the repo file *is* the live file, so edits are tracked instantly.
+- **link** (`i3`, `polybar`, `picom`, `rofi`, `dunst`, `ghostty`, `fontconfig`, `gtk-3.0`, `xsettingsd`, `nvim`, `lazygit`, `zellij`, plus `~/.zshrc`, `~/.zshenv`, `~/.gitconfig`) — the repo file *is* the live file, so edits are tracked instantly.
 - **copy** (`btop`, `opencode`, `kilo`, `mimeapps.list`, `spectaclerc`) — these rewrite their own config directory (opencode drops `node_modules/` and `service.json` beside its jsonc; btop rewrites `btop.conf` on exit). Symlinking them would fill `git status` with generated junk, so they are copied out and captured back on demand.
 
 Push everything from anywhere:

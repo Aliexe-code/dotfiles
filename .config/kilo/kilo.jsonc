@@ -33,7 +33,6 @@
       "chmod *": "allow",
       "zellij *": "allow",
       "v *": "allow",
-      "nvim *": "allow",
       "git log *": "allow",
       "go test *": "allow",
       "go build *": "allow",
